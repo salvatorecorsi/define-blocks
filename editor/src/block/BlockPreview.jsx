@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
 import { Spinner, Button } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 
 export default function BlockPreview( { blockName, attributes, onRestore } ) {
@@ -8,6 +9,7 @@ export default function BlockPreview( { blockName, attributes, onRestore } ) {
 	const [ html, setHtml ] = useState( '' );
 	const [ loading, setLoading ] = useState( true );
 	const abortRef = useRef( null );
+	const valuesKey = JSON.stringify( attributes.values || {} );
 
 	useEffect( () => {
 		abortRef.current?.abort();
@@ -21,7 +23,7 @@ export default function BlockPreview( { blockName, attributes, onRestore } ) {
 			data: {
 				blockName,
 				post_id: postId,
-				attributes: attributes.values || {},
+				attributes: JSON.parse( valuesKey ),
 				content: '',
 			},
 			signal: controller.signal,
@@ -40,7 +42,7 @@ export default function BlockPreview( { blockName, attributes, onRestore } ) {
 			} );
 
 		return () => controller.abort();
-	}, [ blockName, attributes ] );
+	}, [ blockName, postId, valuesKey ] );
 
 	const isEmpty = ! loading && ( ! html || /^<(p|div)>\s*<\/\1>$/.test( html.trim() ) );
 
@@ -55,9 +57,9 @@ export default function BlockPreview( { blockName, attributes, onRestore } ) {
 	if ( isEmpty ) {
 		return (
 			<div className="defb-preview__empty">
-				<p>This block returned empty output.</p>
+				<p>{ __( 'This block returned empty output.', 'define-blocks' ) }</p>
 				<Button variant="secondary" onClick={ onRestore }>
-					Back to editor
+					{ __( 'Back to editor', 'define-blocks' ) }
 				</Button>
 			</div>
 		);

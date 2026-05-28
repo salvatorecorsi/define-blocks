@@ -9,16 +9,22 @@ export default function ToolbarAutocomplete( { name, field, value, onChange } ) 
 
 	useEffect( () => {
 		if ( ! field.postType ) { return; }
+		let cancelled = false;
 		apiFetch( {
 			path: '/defb/v1/posts/list',
 			method: 'POST',
 			data: { post_type: field.postType },
 		} ).then( ( results ) => {
-			setRemoteOptions( results.map( ( p ) => ( {
-				label: p.title,
-				value: String( p.id ),
-			} ) ) );
+			if ( ! cancelled ) {
+				setRemoteOptions( ( results || [] ).map( ( p ) => ( {
+					label: p.title,
+					value: String( p.id ),
+				} ) ) );
+			}
 		} ).catch( () => {} );
+		return () => {
+			cancelled = true;
+		};
 	}, [ field.postType ] );
 
 	const staticOptions = useMemo( () => ( field.options || [] ).map( ( opt ) => {

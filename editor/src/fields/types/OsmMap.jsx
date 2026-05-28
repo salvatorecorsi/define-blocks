@@ -1,5 +1,6 @@
 import { useEffect, useCallback } from '@wordpress/element';
 import { BaseControl, TextControl, Button, PanelBody, Notice, Spinner, Tooltip } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { InspectorControls } from '@wordpress/block-editor';
 import L from 'leaflet';
 import { MapContainer, TileLayer, Marker, useMapEvents, useMap } from 'react-leaflet';
@@ -113,13 +114,13 @@ export default function OsmMap( { name, field, value, onChange } ) {
 	return (
 		<>
 			<InspectorControls>
-				<PanelBody title={ field.label || 'Map' } initialOpen>
+				<PanelBody title={ field.label || __( 'Map', 'define-blocks' ) } initialOpen>
 					<div className="defb-map-inspector">
 						<div className="defb-map-search">
 							<TextControl
 								value={ m.query }
 								onChange={ m.setQuery }
-								placeholder="Search address..."
+								placeholder={ __( 'Search address…', 'define-blocks' ) }
 								onKeyDown={ ( e ) => {
 									if ( e.key === 'Enter' ) { e.preventDefault(); findCoordinates(); }
 								} }
@@ -130,16 +131,16 @@ export default function OsmMap( { name, field, value, onChange } ) {
 						</div>
 						{ m.busy && <Spinner /> }
 						{ m.noResults && (
-							<Notice status="warning" isDismissible={ false }>No results for &ldquo;{ m.query }&rdquo;.</Notice>
+							<Notice status="warning" isDismissible={ false }>{ sprintf( __( 'No results for “%s”.', 'define-blocks' ), m.query ) }</Notice>
 						) }
 						{ m.hasDraft && (
-							<Notice status="info" isDismissible={ false }>Click the map or drag the pin to confirm.</Notice>
+							<Notice status="info" isDismissible={ false }>{ __( 'Click the map or drag the pin to confirm.', 'define-blocks' ) }</Notice>
 						) }
 						<div className="defb-map-coords">
-							<TextControl label="Lat" value={ String( m.lat ) } onChange={ m.saveLat } __next40pxDefaultSize __nextHasNoMarginBottom />
-							<TextControl label="Lng" value={ String( m.lng ) } onChange={ m.saveLng } __next40pxDefaultSize __nextHasNoMarginBottom />
+							<TextControl label={ __( 'Lat', 'define-blocks' ) } value={ String( m.lat ) } onChange={ m.saveLat } __next40pxDefaultSize __nextHasNoMarginBottom />
+							<TextControl label={ __( 'Lng', 'define-blocks' ) } value={ String( m.lng ) } onChange={ m.saveLng } __next40pxDefaultSize __nextHasNoMarginBottom />
 						</div>
-						<TextControl label="Address" value={ m.addr } onChange={ m.saveAddr } placeholder="Custom address" __next40pxDefaultSize __nextHasNoMarginBottom />
+						<TextControl label={ __( 'Address', 'define-blocks' ) } value={ m.addr } onChange={ m.saveAddr } placeholder={ __( 'Custom address', 'define-blocks' ) } __next40pxDefaultSize __nextHasNoMarginBottom />
 					</div>
 				</PanelBody>
 			</InspectorControls>
@@ -148,7 +149,7 @@ export default function OsmMap( { name, field, value, onChange } ) {
 					label={
 						<>
 							{ field.label }
-							<Tooltip text="No API key needed. Search moves the preview; click or drag the pin to save.">
+							<Tooltip text={ __( 'No API key needed. Search moves the preview; click or drag the pin to save.', 'define-blocks' ) }>
 								<span style={ { cursor: 'help' } }>&#x2139;&#xFE0F;</span>
 							</Tooltip>
 						</>

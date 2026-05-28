@@ -1,6 +1,7 @@
 import { useState } from '@wordpress/element';
 import { MediaUpload, MediaUploadCheck, InspectorControls } from '@wordpress/block-editor';
 import { Button, BaseControl, FocalPointPicker, PanelBody } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 
 export default function Media( { name, field, value, onChange } ) {
 	const mediaId = value?.id || value?.ID || 0;
@@ -33,7 +34,7 @@ export default function Media( { name, field, value, onChange } ) {
 		<>
 			{ hasFocus && mediaUrl && (
 				<InspectorControls>
-					<PanelBody title={ `${ field.label || name } — Focus` } initialOpen>
+					<PanelBody title={ sprintf( __( '%s — Focus', 'define-blocks' ), field.label || name ) } initialOpen>
 						<FocalPointPicker
 							url={ mediaUrl }
 							value={ displayFocus }
@@ -69,16 +70,16 @@ export default function Media( { name, field, value, onChange } ) {
 										</div>
 										<div className="defb-media-field__actions">
 											<Button variant="secondary" size="small" onClick={ open }>
-												Replace
+												{ __( 'Replace', 'define-blocks' ) }
 											</Button>
 											<Button variant="tertiary" size="small" isDestructive onClick={ onRemove }>
-												Remove
+												{ __( 'Remove', 'define-blocks' ) }
 											</Button>
 										</div>
 									</>
 								) : (
 									<Button variant="secondary" onClick={ open }>
-										{ field.buttonLabel || 'Select Image' }
+										{ field.buttonLabel || __( 'Select Image', 'define-blocks' ) }
 									</Button>
 								) }
 							</div>

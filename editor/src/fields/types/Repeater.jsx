@@ -1,8 +1,10 @@
 import { useRef, useCallback } from '@wordpress/element';
 import { BaseControl, Button } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { DndContext, closestCenter, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, arrayMove } from '@dnd-kit/sortable';
 import { uid } from '../../engine/uid';
+import { buildEmpty } from '../../engine/values';
 import RepeaterItem from './RepeaterItem';
 
 function ensureIds( items ) {
@@ -58,7 +60,7 @@ export default function Repeater( { name, field, value, onChange } ) {
 		}
 		const empty = { _defb_id: uid() };
 		Object.keys( subFields ).forEach( ( key ) => {
-			empty[ key ] = subFields[ key ].default ?? '';
+			empty[ key ] = buildEmpty( subFields[ key ] );
 		} );
 		onChange( [ ...current, empty ] );
 	}, [ maxItems, subFields, onChange ] );
@@ -86,7 +88,7 @@ export default function Repeater( { name, field, value, onChange } ) {
 		if ( field.previewKey && item[ field.previewKey ] ) {
 			return String( item[ field.previewKey ] );
 		}
-		return `Item ${ index + 1 }`;
+		return sprintf( __( 'Item %d', 'define-blocks' ), index + 1 );
 	};
 
 	const sortableIds = items.map( ( it ) => it._defb_id );
@@ -123,7 +125,7 @@ export default function Repeater( { name, field, value, onChange } ) {
 						icon="plus-alt2"
 						onClick={ handleAdd }
 					>
-						{ field.addLabel || 'Add Item' }
+						{ field.addLabel || __( 'Add Item', 'define-blocks' ) }
 					</Button>
 				) }
 			</div>

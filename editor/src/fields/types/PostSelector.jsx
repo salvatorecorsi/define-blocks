@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from '@wordpress/element';
 import { TextControl, Button, BaseControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, verticalListSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
@@ -146,7 +147,7 @@ export default function PostSelector( { name, field, value, onChange } ) {
 					__next40pxDefaultSize
 					value={ searchText }
 					onChange={ handleSearch }
-					placeholder={ field.placeholder || 'Search posts...' }
+					placeholder={ field.placeholder || __( 'Search posts…', 'define-blocks' ) }
 				/>
 
 				{ visibleResults.length > 0 && (

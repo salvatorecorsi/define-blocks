@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { TextControl, ToggleControl, BaseControl, Spinner } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 
 export default function Link( { name, field, value, onChange, onBlur } ) {
@@ -72,13 +73,13 @@ export default function Link( { name, field, value, onChange, onBlur } ) {
 				/>
 				<TextControl
 					__next40pxDefaultSize
-					placeholder={ field.titlePlaceholder || 'Link text' }
+					placeholder={ field.titlePlaceholder || __( 'Link text', 'define-blocks' ) }
 					value={ link.title }
 					onChange={ ( val ) => update( 'title', val ) }
 				/>
 				<ToggleControl
 					__nextHasNoMarginBottom
-					label="Open in new tab"
+					label={ __( 'Open in new tab', 'define-blocks' ) }
 					checked={ !! link.opensInNewTab }
 					onChange={ ( val ) => update( 'opensInNewTab', val ) }
 				/>
@@ -86,7 +87,7 @@ export default function Link( { name, field, value, onChange, onBlur } ) {
 					<div className="defb-link-field__search">
 						<TextControl
 							__next40pxDefaultSize
-							placeholder={ `Search ${ field.postType }...` }
+							placeholder={ sprintf( __( 'Search %s…', 'define-blocks' ), field.postType ) }
 							value={ query }
 							onChange={ setQuery }
 						/>

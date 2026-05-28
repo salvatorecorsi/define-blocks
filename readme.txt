@@ -1,9 +1,9 @@
 === Define Blocks ===
 Contributors: salvatorecorsi
 Tags: blocks, gutenberg, custom blocks, block editor, php blocks
-Requires at least: 6.0
-Tested up to: 7.0
-Requires PHP: 8.0
+Requires at least: 6.3
+Tested up to: 6.8
+Requires PHP: 8.1
 Stable tag: 1.0.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -16,30 +16,32 @@ You know the drill: you need a custom block, so you set up a `block.json`, a web
 
 Define Blocks skips all of that. You call one PHP function and describe what fields you want:
 
-`define_block_type( 'myplugin/hero', [
-    'title'  => 'Hero',
-    'icon'   => 'cover-image',
-    'schema' => [
-        [
-            'scope'  => 'content',
-            'fields' => [
-                'heading' => [ 'type' => 'richtext', 'label' => 'Heading' ],
-                'image'   => [ 'type' => 'media',    'label' => 'Background' ],
+`add_action( 'init', function () {
+    define_block_type( 'myplugin/hero', [
+        'title'  => 'Hero',
+        'icon'   => 'cover-image',
+        'schema' => [
+            [
+                'scope'  => 'content',
+                'fields' => [
+                    'heading' => [ 'type' => 'richtext', 'label' => 'Heading' ],
+                    'image'   => [ 'type' => 'media',    'label' => 'Background' ],
+                ],
+            ],
+            [
+                'scope' => 'inspector',
+                'panel' => 'Settings',
+                'fields' => [
+                    'color'   => [ 'type' => 'color', 'label' => 'Overlay' ],
+                    'opacity' => [ 'type' => 'range', 'label' => 'Opacity', 'min' => 0, 'max' => 100 ],
+                ],
             ],
         ],
-        [
-            'scope' => 'inspector',
-            'panel' => 'Settings',
-            'fields' => [
-                'color'   => [ 'type' => 'color', 'label' => 'Overlay' ],
-                'opacity' => [ 'type' => 'range', 'label' => 'Opacity', 'min' => 0, 'max' => 100 ],
-            ],
-        ],
-    ],
-    'render' => function ( $attributes, $content, $block ) {
-        // return your HTML
-    },
-] );`
+        'render' => function ( $attributes, $content, $block ) {
+            // return your HTML
+        },
+    ] );
+} );`
 
 The plugin reads your schema and builds the editor UI: content area fields, inspector panels, toolbar buttons. You get a real Gutenberg block registered with `register_block_type()` under the hood, with all the standard supports (alignment, colors, spacing). Your theme or plugin just ships PHP.
 
@@ -59,7 +61,7 @@ Docs and source: [GitHub](https://github.com/salvatorecorsi/define-blocks).
 
 1. Upload `define-blocks` to `/wp-content/plugins/`.
 2. Activate it.
-3. Call `define_block_type()` somewhere in your theme or plugin.
+3. Call `define_block_type()` on the `init` hook (or earlier) from your theme or plugin.
 
 No npm. No webpack. No node_modules folder.
 
@@ -68,6 +70,10 @@ No npm. No webpack. No node_modules folder.
 = Do I have to write JavaScript? =
 
 No. The block schema is PHP, the render is PHP. The plugin handles the React side.
+
+= Where do I call define_block_type()? =
+
+On the `init` hook, or any time before it. Registrations are collected at `init` priority 99, so a block registered after that point won't show up. Calling it directly from a plugin's main file or a theme's `functions.php` works; if you wrap it in a hook, use `init`.
 
 = Does this break other blocks? =
 
@@ -99,7 +105,7 @@ $slides  = defb_get_blocks( $post_id, 'myplugin/slide' );`
 
 = What field types are there? =
 
-text, textarea, richtext, html, select, multi-select, autocomplete, chips, checkbox, color, range, url, link, media, file, gallery, video, date, time, datetime, post-selector, taxonomy, repeater, group, tabpanels, innerblocks, google-map, osm-map, toolbar-toggle, toolbar-select, toolbar-dropdown, hidden, value, title. Most have aliases -- `image` works for `media`, `toggle` for `checkbox`, `tabs` for `tabpanels`, and so on.
+text, text-with-parser, textarea, richtext, select, multi-select, autocomplete, multi-autocomplete, chips, checkbox, color, range, url, link, media, file, gallery, video, date, time, datetime, post-selector, taxonomy, repeater, group, tabpanels, innerblocks, google-map, osm-map, toolbar-toggle, toolbar-select, toolbar-dropdown, hidden, value, title. Most have aliases -- `image` works for `media`, `toggle` for `checkbox`, `tabs` for `tabpanels`, and so on.
 
 = Can I make my own field type? =
 

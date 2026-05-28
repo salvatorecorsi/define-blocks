@@ -4,8 +4,8 @@
  * Plugin URI:        https://github.com/salvatorecorsi/define-blocks
  * Description:       Define native blocks with pure PHP.
  * Version:           1.0.0
- * Requires at least: 6.0
- * Requires PHP:      8.0
+ * Requires at least: 6.3
+ * Requires PHP:      8.1
  * Author:            Salvatore Corsi
  * Author URI:        https://salvatorecorsi.com
  * License:           GPL-2.0-or-later
@@ -32,18 +32,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 add_action( 'init', static function (): void {
 	load_plugin_textdomain( 'define-blocks', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-
-	$post_types = get_post_types( [ 'public' => true ] );
-
-	foreach ( $post_types as $post_type ) {
-		register_post_meta( $post_type, '_defb_dirty', [
-			'show_in_rest'  => true,
-			'single'        => true,
-			'type'          => 'integer',
-			'default'       => 0,
-			'auth_callback' => static fn() => current_user_can( 'edit_posts' ),
-		] );
-	}
 } );
 
 add_action( 'enqueue_block_editor_assets', static function (): void {
@@ -100,7 +88,7 @@ function defb_run_field_saves( array $schema, array $values, int $post_id ): voi
 			}
 
 			if ( ! empty( $field['saveInMeta'] ) && is_string( $field['saveInMeta'] ) ) {
-				update_post_meta( $post_id, $field['saveInMeta'], $val );
+				update_post_meta( $post_id, $field['saveInMeta'], defb_sanitize_value( $val, $field ) );
 			}
 
 			if ( ! empty( $field['saveCallback'] ) && is_callable( $field['saveCallback'] ) ) {

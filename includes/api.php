@@ -320,7 +320,7 @@ function defb_sanitize_value( mixed $value, array $field ): mixed {
 		'repeater'
 			=> defb_sanitize_repeater( $value, $field ),
 
-		'innerblocks', 'tabpanels', 'group', 'html', 'title', 'hidden', 'value'
+		'innerblocks', 'tabpanels', 'group', 'title', 'hidden', 'value'
 			=> $value,
 
 		default => defb_sanitize_deep( $value ),
@@ -472,10 +472,6 @@ function defb_meta_field_map(): array {
 	}
 
 	return $map;
-}
-
-function defb_allowed_meta_keys(): array {
-	return array_keys( defb_meta_field_map() );
 }
 
 function defb_query_posts( array $args ): array {

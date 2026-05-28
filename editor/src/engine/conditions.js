@@ -301,6 +301,7 @@ function compileShowExpression( source ) {
 	code = code.replace( /(\w[\w.]*)\s+!empty\b/g, '!!$1' );
 	code = code.replace( /(\w[\w.]*)\s+empty\b/g, '!$1' );
 	code = code.replace( /(\w[\w.]*)\s+in\s+(\[[^\]]*\])/g, '$2.includes($1)' );
+	code = code.replace( /(\w[\w.]*)\s+contains\s+("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*'|[\w.]+)/g, '$1.includes($2)' );
 
 	const tokens = tokenize( code );
 	const ast = parseAST( tokens );

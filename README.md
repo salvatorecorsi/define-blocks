@@ -9,55 +9,59 @@ Custom Gutenberg blocks from PHP. You write a schema, the plugin builds the edit
 *The render callback produces the frontend HTML.*
 
 ```php
-define_block_type( 'myplugin/hero', [
-    'title'    => 'Hero',
-    'icon'     => 'cover-image',
-    'category' => 'design',
-    'schema'   => [
-        [
-            'scope'  => 'content',
-            'fields' => [
-                'heading' => [ 'type' => 'richtext', 'label' => 'Heading' ],
-                'image'   => [ 'type' => 'media',    'label' => 'Background' ],
+add_action( 'init', function () {
+    define_block_type( 'myplugin/hero', [
+        'title'    => 'Hero',
+        'icon'     => 'cover-image',
+        'category' => 'design',
+        'schema'   => [
+            [
+                'scope'  => 'content',
+                'fields' => [
+                    'heading' => [ 'type' => 'richtext', 'label' => 'Heading' ],
+                    'image'   => [ 'type' => 'media',    'label' => 'Background' ],
+                ],
+            ],
+            [
+                'scope' => 'inspector',
+                'panel' => 'Settings',
+                'fields' => [
+                    'overlay_color'   => [ 'type' => 'color', 'label' => 'Overlay' ],
+                    'overlay_opacity' => [ 'type' => 'range', 'label' => 'Opacity', 'min' => 0, 'max' => 100 ],
+                ],
             ],
         ],
-        [
-            'scope' => 'inspector',
-            'panel' => 'Settings',
-            'fields' => [
-                'overlay_color'   => [ 'type' => 'color', 'label' => 'Overlay' ],
-                'overlay_opacity' => [ 'type' => 'range', 'label' => 'Opacity', 'min' => 0, 'max' => 100 ],
-            ],
-        ],
-    ],
-    'render' => function ( $attributes, $content, $block ) {
-        $values = $attributes['values'] ?? [];
-        $heading = $values['heading'] ?? '';
-        $image   = $values['image']['url'] ?? '';
-        $color   = $values['overlay_color'] ?? 'rgba(0,0,0,0.5)';
-        $opacity = ( $values['overlay_opacity'] ?? 50 ) / 100;
+        'render' => function ( $attributes, $content, $block ) {
+            $values = $attributes['values'] ?? [];
+            $heading = $values['heading'] ?? '';
+            $image   = $values['image']['url'] ?? '';
+            $color   = $values['overlay_color'] ?? 'rgba(0,0,0,0.5)';
+            $opacity = ( $values['overlay_opacity'] ?? 50 ) / 100;
 
-        return sprintf(
-            '<div class="hero" style="background-image:url(%s)">
-                <div class="hero__overlay" style="background:%s;opacity:%s"></div>
-                <h1 class="hero__heading">%s</h1>
-            </div>',
-            esc_url( $image ),
-            esc_attr( $color ),
-            esc_attr( $opacity ),
-            wp_kses_post( $heading )
-        );
-    },
-] );
+            return sprintf(
+                '<div class="hero" style="background-image:url(%s)">
+                    <div class="hero__overlay" style="background:%s;opacity:%s"></div>
+                    <h1 class="hero__heading">%s</h1>
+                </div>',
+                esc_url( $image ),
+                esc_attr( $color ),
+                esc_attr( $opacity ),
+                wp_kses_post( $heading )
+            );
+        },
+    ] );
+} );
 ```
 
 No JavaScript on your side. No `block.json`. No build step. Under the hood it calls `register_block_type()` like any normal block -- you just never have to touch React.
 
-WordPress 6.0+, PHP 8.0+.
+WordPress 6.3+, PHP 8.1+.
 
 ## Installation
 
 Drop `define-blocks` into `/wp-content/plugins/`, activate, call `define_block_type()` from your theme or plugin.
+
+Call it on the `init` hook (or earlier). Registrations are collected at `init` priority 99, so a block registered after that point is ignored.
 
 ## `define_block_type()` reference
 
@@ -97,7 +101,6 @@ define_block_type( 'namespace/block-name', [
     'startPreview'    => true,
     'canCollapse'     => false,
     'hideTitle'       => false,
-    'colorPreview'    => 'background_color',
 ],
 ```
 
@@ -107,7 +110,6 @@ define_block_type( 'namespace/block-name', [
 | `startPreview` | `bool` | `false` | Open in preview mode when inserted |
 | `canCollapse` | `bool` | `false` | Collapsible content area |
 | `hideTitle` | `bool` | `false` | Hide the block title bar |
-| `colorPreview` | `string` | `null` | Field name whose value tints the block header |
 
 Shorthand: `'frontend_preview' => true` at the top level sets both `frontendPreview` and `startPreview`.
 
@@ -196,7 +198,6 @@ If all fields go in the content area, skip the scope wrapper:
 | `text-with-parser` | `textwithparser`, `text_with_parser` | Text input with a custom parsing hook |
 | `textarea` | `text-area`, `code`, `json` | Multiline input |
 | `richtext` | `rich-text`, `rich_text`, `editor`, `classic-editor` | Rich text (WYSIWYG) |
-| `html` | -- | Raw HTML |
 
 ### Selection
 
@@ -295,8 +296,6 @@ If all fields go in the content area, skip the scope wrapper:
 | `condition` | `array\|string` | Show when condition matches |
 | `conditionHide` | `array\|string` | Hide when condition matches |
 | `saveInMeta` | `string` | Save as post meta with this key |
-| `persistUrl` | `string` | POST the value to this URL on save |
-| `method` | `string` | HTTP method for `persistUrl` (default: `POST`) |
 | `validate` | `array\|callable` | Validation rules, runs on save (PHP side) |
 | `saveCallback` | `callable` | Custom save logic -- gets `$value`, `$post_id`, `$field_name` |
 
@@ -328,7 +327,7 @@ If all fields go in the content area, skip the scope wrapper:
 ],
 ```
 
-`media` stores an object: `id`, `url`, `alt`, `width`, `height`.
+`media` stores an object: `id`, `url`, `alt`, `title`, `sizes`.
 
 `repeater` has sub-fields, min/max items, and a `previewKey` for the collapsed label:
 
@@ -445,7 +444,7 @@ String expressions for anything more complex:
 ```php
 'condition' => 'layout == "grid" && columns > 2',
 'condition' => 'show_overlay == true || layout == "hero"',
-'condition' => 'items != empty',
+'condition' => 'items !empty',
 ```
 
 Operators: `==`, `!=`, `>`, `<`, `>=`, `<=`, `&&`, `||`, `empty`, `in`, `contains`.
@@ -653,7 +652,7 @@ Props your component gets:
 | `defb.blockSettings` | filter | Modify settings before `registerBlockType()` |
 | `defb.ready.{blockName}` | action | Fires when a block instance mounts |
 | `defb.change.{blockName}.{field}` | action | Fires when a field value changes |
-| `defb.toggle.{blockName}` | action | Fires when a checkbox is toggled |
+| `defb.toggle.{blockName}.{field}` | action | Fires when a checkbox is toggled |
 | `defb.toolbar.toggle` | action | Fires when a toolbar toggle changes |
 | `defb.parse.{parser}` | filter | Custom parsing for `text-with-parser` fields |
 
@@ -685,7 +684,7 @@ window.DefineBlocks = {
 
 ## Credits
 
-Released as open source by [Salvatore Corsi](https://salvatorecorsi.com).
+By [Salvatore Corsi](https://salvatorecorsi.com). With thanks to QZR Studio.
 
 ## License
 

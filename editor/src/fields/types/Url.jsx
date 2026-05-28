@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from '@wordpress/element';
 import { TextControl, BaseControl, Button, Spinner } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 
 export default function Url( { name, field, value, onChange, onBlur } ) {
@@ -66,7 +67,7 @@ export default function Url( { name, field, value, onChange, onBlur } ) {
 				<div className="defb-url-search" style={ { position: 'relative', marginTop: '4px' } }>
 					<TextControl
 						__next40pxDefaultSize
-						placeholder={ `Search ${ field.postType }...` }
+						placeholder={ sprintf( __( 'Search %s…', 'define-blocks' ), field.postType ) }
 						value={ query }
 						onChange={ setQuery }
 					/>

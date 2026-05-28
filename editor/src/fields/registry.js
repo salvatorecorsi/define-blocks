@@ -11,7 +11,6 @@ import Title from './types/Title';
 import Value from './types/Value';
 import Group from './types/Group';
 import InnerBlocksField from './types/InnerBlocksField';
-import HTML from './types/HTML';
 import Video from './types/Video';
 import Url from './types/Url';
 import Link from './types/Link';
@@ -38,7 +37,6 @@ const FIELD_COMPONENTS = {
 	'text-with-parser': TextInput,
 	textarea: Textarea,
 	richtext: RichText,
-	html: HTML,
 	select: Select,
 	'multi-select': MultiAutocomplete,
 	autocomplete: Autocomplete,

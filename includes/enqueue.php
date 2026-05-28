@@ -111,10 +111,7 @@ add_action( 'enqueue_block_editor_assets', static function (): void {
 
 	wp_add_inline_script( 'defb-editor', 'var defineBlocks = ' . wp_json_encode( [
 		'blocks'       => defb_strip_closures( $blocks ),
-		'pluginUrl'    => DEFB_URL,
 		'keys'         => [ 'googleMaps' => $google_key ],
-		'restBase'     => get_rest_url(),
-		'nonce'        => wp_create_nonce( 'wp_rest' ),
 		'fieldAliases' => defb_field_aliases(),
 	] ) . ';', 'before' );
 
@@ -172,13 +169,19 @@ function defb_uses_field_type( array $blocks, string ...$types ): bool {
 
 	foreach ( $blocks as $block ) {
 		$schema = $block['_schema'] ?? [];
-		foreach ( $schema as $section ) {
-			if ( ! empty( $section['fields'] ) && $check( $section['fields'] ) ) {
+
+		foreach ( [ 'content', 'inspector-advanced' ] as $scope ) {
+			if ( ! empty( $schema[ $scope ]['fields'] ) && $check( $schema[ $scope ]['fields'] ) ) {
 				return true;
 			}
 		}
-		if ( ! empty( $block['fields'] ) && $check( $block['fields'] ) ) {
-			return true;
+
+		foreach ( [ 'inspector', 'toolbar' ] as $scope ) {
+			foreach ( ( $schema[ $scope ] ?? [] ) as $section ) {
+				if ( ! empty( $section['fields'] ) && $check( $section['fields'] ) ) {
+					return true;
+				}
+			}
 		}
 	}
 

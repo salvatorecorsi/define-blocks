@@ -113,8 +113,8 @@ export function BlockProvider( { blockName, clientId, attributes, setAttributes,
 		return () => {
 			if ( flushTimer.current ) {
 				clearTimeout( flushTimer.current );
+				setAttributes( { values: { ...stateRef.current } } );
 			}
-			setAttributes( { values: { ...stateRef.current } } );
 		};
 	}, [] );
 

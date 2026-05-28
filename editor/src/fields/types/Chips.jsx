@@ -1,3 +1,4 @@
+import { __ } from '@wordpress/i18n';
 import ChipsInput from '../shared/ChipsInput';
 
 export default function Chips( { name, field, value, onChange } ) {
@@ -17,7 +18,7 @@ export default function Chips( { name, field, value, onChange } ) {
 			onChange={ onChange }
 			placeholder={ field.placeholder }
 			allowCreate
-			createLabel={ field.createLabel || 'Create' }
+			createLabel={ field.createLabel || __( 'Create', 'define-blocks' ) }
 			draggable={ field.draggable || false }
 		/>
 	);

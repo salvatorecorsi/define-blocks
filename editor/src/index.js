@@ -1,14 +1,37 @@
 import { registerBlockType } from '@wordpress/blocks';
+import { InnerBlocks } from '@wordpress/block-editor';
 import { applyFilters } from '@wordpress/hooks';
 import Edit from './block/Edit';
 import { setupRuntime } from './engine/runtime';
-import { resolveType } from './fields/aliases';
-import { collectDefaults } from './engine/values';
 import './styles/index.scss';
 
 setupRuntime();
 
 const { blocks = {} } = window.defineBlocks || {};
+
+function schemaHasInnerBlocks( schema ) {
+	const scan = ( fields ) =>
+		Object.values( fields || {} ).some( ( field ) => {
+			if ( field.type === 'innerblocks' ) {
+				return true;
+			}
+			if ( field.fields ) {
+				return scan( field.fields );
+			}
+			if ( field.tabs ) {
+				return Object.values( field.tabs ).some( ( tab ) => scan( tab.fields ) );
+			}
+			return false;
+		} );
+
+	if ( scan( schema.content?.fields ) ) {
+		return true;
+	}
+	if ( scan( schema[ 'inspector-advanced' ]?.fields ) ) {
+		return true;
+	}
+	return ( schema.inspector || [] ).some( ( panel ) => scan( panel.fields ) );
+}
 
 Object.entries( blocks ).forEach( ( [ name, blockData ] ) => {
 	const schema = blockData._schema || {};
@@ -20,6 +43,7 @@ Object.entries( blocks ).forEach( ( [ name, blockData ] ) => {
 	} );
 
 	const blockSettings = blockData.settings || {};
+	const hasInnerBlocks = schemaHasInnerBlocks( schema );
 
 	let settings = {
 		apiVersion: 3,
@@ -36,7 +60,7 @@ Object.entries( blocks ).forEach( ( [ name, blockData ] ) => {
 			...attributeDefaults,
 		},
 		edit: ( props ) => <Edit { ...props } blockData={ blockData } schema={ schema } />,
-		save: () => null,
+		save: hasInnerBlocks ? () => <InnerBlocks.Content /> : () => null,
 	};
 
 	settings = applyFilters( 'defb.blockSettings', settings, name, blockData );

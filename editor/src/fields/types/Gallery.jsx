@@ -1,5 +1,6 @@
 import { MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
 import { Button, BaseControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { DndContext, closestCenter } from '@dnd-kit/core';
 import { SortableContext, rectSortingStrategy, useSortable, arrayMove } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -55,7 +56,7 @@ function SortableImage( { image, onRemove } ) {
 					textAlign: 'center',
 					padding: 0,
 				} }
-				aria-label="Remove image"
+				aria-label={ __( 'Remove image', 'define-blocks' ) }
 			>
 				&times;
 			</button>
@@ -123,7 +124,7 @@ export default function Gallery( { name, field, value, onChange } ) {
 						value={ imageIds }
 						render={ ( { open } ) => (
 							<Button variant="secondary" onClick={ open }>
-								{ field.buttonLabel || 'Add Images' }
+								{ field.buttonLabel || __( 'Add Images', 'define-blocks' ) }
 							</Button>
 						) }
 					/>

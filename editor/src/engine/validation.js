@@ -1,4 +1,4 @@
-import { resolveType } from '../fields/aliases';
+import { __, sprintf } from '@wordpress/i18n';
 
 function isEmpty( value ) {
 	if ( value === null || value === undefined || value === '' ) {
@@ -32,7 +32,7 @@ export function validateField( value, fieldDef ) {
 	const msg = fieldDef.message;
 
 	if ( fieldDef.required && isEmpty( value ) ) {
-		return msg || 'This field is required';
+		return msg || __( 'This field is required', 'define-blocks' );
 	}
 
 	if ( ! fieldDef.required && isEmpty( value ) ) {
@@ -41,27 +41,27 @@ export function validateField( value, fieldDef ) {
 
 	if ( typeof value === 'string' ) {
 		if ( fieldDef.minLength && value.length < fieldDef.minLength ) {
-			return msg || `Minimum ${ fieldDef.minLength } characters`;
+			return msg || sprintf( __( 'Minimum %d characters', 'define-blocks' ), fieldDef.minLength );
 		}
 		if ( fieldDef.maxLength && value.length > fieldDef.maxLength ) {
-			return msg || `Maximum ${ fieldDef.maxLength } characters`;
+			return msg || sprintf( __( 'Maximum %d characters', 'define-blocks' ), fieldDef.maxLength );
 		}
 	}
 
 	if ( fieldDef.pattern && typeof value === 'string' ) {
 		const regex = parsePattern( fieldDef.pattern );
 		if ( ! regex.test( value ) ) {
-			return msg || 'Invalid format';
+			return msg || __( 'Invalid format', 'define-blocks' );
 		}
 	}
 
 	const numVal = typeof value === 'number' ? value : parseFloat( value );
 	if ( ! isNaN( numVal ) ) {
 		if ( fieldDef.min !== undefined && numVal < fieldDef.min ) {
-			return msg || `Minimum value is ${ fieldDef.min }`;
+			return msg || sprintf( __( 'Minimum value is %s', 'define-blocks' ), fieldDef.min );
 		}
 		if ( fieldDef.max !== undefined && numVal > fieldDef.max ) {
-			return msg || `Maximum value is ${ fieldDef.max }`;
+			return msg || sprintf( __( 'Maximum value is %s', 'define-blocks' ), fieldDef.max );
 		}
 	}
 

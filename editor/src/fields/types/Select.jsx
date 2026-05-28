@@ -1,5 +1,6 @@
 import { useState, useEffect } from '@wordpress/element';
 import { SelectControl, Spinner } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 
 export default function Select( { name, field, value, onChange, onBlur } ) {
@@ -10,20 +11,29 @@ export default function Select( { name, field, value, onChange, onBlur } ) {
 		if ( ! field.postType ) {
 			return;
 		}
+		let cancelled = false;
 		setLoading( true );
 		apiFetch( {
 			path: '/defb/v1/posts/list',
 			method: 'POST',
 			data: { post_type: field.postType },
 		} ).then( ( results ) => {
-			setRemoteOptions( results.map( ( p ) => ( {
+			if ( cancelled ) {
+				return;
+			}
+			setRemoteOptions( ( results || [] ).map( ( p ) => ( {
 				label: p.title,
 				value: String( p.id ),
 			} ) ) );
 			setLoading( false );
 		} ).catch( () => {
-			setLoading( false );
+			if ( ! cancelled ) {
+				setLoading( false );
+			}
 		} );
+		return () => {
+			cancelled = true;
+		};
 	}, [ field.postType ] );
 
 	const staticOptions = ( field.options || [] ).map( ( opt ) => {
@@ -46,7 +56,7 @@ export default function Select( { name, field, value, onChange, onBlur } ) {
 			label={ field.label }
 			help={ field.description }
 			value={ value ?? '' }
-			options={ hasEmpty ? options : [ { label: field.placeholder || '— Select —', value: '' }, ...options ] }
+			options={ hasEmpty ? options : [ { label: field.placeholder || __( '— Select —', 'define-blocks' ), value: '' }, ...options ] }
 			onChange={ ( val ) => { onChange( val ); if ( onBlur ) { onBlur(); } } }
 		/>
 	);

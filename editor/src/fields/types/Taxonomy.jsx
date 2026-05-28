@@ -1,16 +1,20 @@
 import { useCallback } from '@wordpress/element';
 import { useSelect } from '@wordpress/data';
+import { __ } from '@wordpress/i18n';
 import apiFetch from '@wordpress/api-fetch';
 import ChipsInput from '../shared/ChipsInput';
 
 export default function Taxonomy( { name, field, value, onChange } ) {
 	const taxonomySlug = field.taxonomy || 'category';
 
-	const terms = useSelect(
+	const { terms, restBase } = useSelect(
 		( select ) => {
-			return select( 'core' ).getEntityRecords( 'taxonomy', taxonomySlug, {
-				per_page: -1,
-			} );
+			const core = select( 'core' );
+			const taxonomy = core.getTaxonomy( taxonomySlug );
+			return {
+				terms: core.getEntityRecords( 'taxonomy', taxonomySlug, { per_page: -1 } ),
+				restBase: taxonomy?.rest_base || taxonomySlug,
+			};
 		},
 		[ taxonomySlug ]
 	);
@@ -41,9 +45,8 @@ export default function Taxonomy( { name, field, value, onChange } ) {
 
 			if ( isNew && field.allowCreate ) {
 				try {
-					const restBase = field.restBase || taxonomySlug;
 					const created = await apiFetch( {
-						path: `/wp/v2/${ restBase }`,
+						path: `/wp/v2/${ field.restBase || restBase }`,
 						method: 'POST',
 						data: { name: lastItem.label },
 					} );
@@ -65,7 +68,7 @@ export default function Taxonomy( { name, field, value, onChange } ) {
 
 			onChange( newValue );
 		},
-		[ field.allowCreate, field.restBase, taxonomySlug, termOptions, onChange ]
+		[ field.allowCreate, field.restBase, restBase, termOptions, onChange ]
 	);
 
 	return (
@@ -77,7 +80,7 @@ export default function Taxonomy( { name, field, value, onChange } ) {
 			onChange={ handleAdd }
 			placeholder={ field.placeholder }
 			allowCreate={ field.allowCreate || false }
-			createLabel={ field.createLabel || 'Create' }
+			createLabel={ field.createLabel || __( 'Create', 'define-blocks' ) }
 			draggable={ field.draggable || false }
 		/>
 	);

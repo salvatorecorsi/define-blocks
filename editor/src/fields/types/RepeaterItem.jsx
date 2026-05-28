@@ -1,5 +1,6 @@
 import { useState, useCallback, useMemo, memo } from '@wordpress/element';
 import { Button, Icon } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { resolveType } from '../aliases';
@@ -57,18 +58,18 @@ function RepeaterItem( { id, index, fields, values, onFieldChange, onRemove, onD
 					<Icon icon="menu" />
 				</span>
 				<span className="defb-repeater-item__label">
-					{ previewLabel || `Item ${ index + 1 }` }
+					{ previewLabel || sprintf( __( 'Item %d', 'define-blocks' ), index + 1 ) }
 				</span>
 				<Button
 					size="small"
 					icon="admin-page"
-					label="Duplicate"
+					label={ __( 'Duplicate', 'define-blocks' ) }
 					onClick={ ( e ) => { e.stopPropagation(); handleDuplicate(); } }
 				/>
 				<Button
 					size="small"
 					icon="trash"
-					label="Remove"
+					label={ __( 'Remove', 'define-blocks' ) }
 					isDestructive
 					disabled={ ! canRemove }
 					onClick={ ( e ) => { e.stopPropagation(); handleRemove(); } }
@@ -103,6 +104,7 @@ function RepeaterItem( { id, index, fields, values, onFieldChange, onRemove, onD
 									type={ resolvedType }
 									value={ values[ key ] }
 									onChange={ ( val ) => onFieldChange( index, key, val ) }
+									onBlur={ () => {} }
 								/>
 							</div>
 						);

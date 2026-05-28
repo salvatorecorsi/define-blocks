@@ -1,5 +1,6 @@
 import { MediaUpload, MediaUploadCheck } from '@wordpress/block-editor';
 import { Button, BaseControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 export default function File( { name, field, value, onChange } ) {
 	const fileId = value?.id || 0;
@@ -37,16 +38,16 @@ export default function File( { name, field, value, onChange } ) {
 									</div>
 									<div className="defb-file-field__actions">
 										<Button variant="secondary" size="small" onClick={ open }>
-											Replace
+											{ __( 'Replace', 'define-blocks' ) }
 										</Button>
 										<Button variant="tertiary" size="small" isDestructive onClick={ onRemove }>
-											Remove
+											{ __( 'Remove', 'define-blocks' ) }
 										</Button>
 									</div>
 								</div>
 							) : (
 								<Button variant="secondary" onClick={ open }>
-									{ field.buttonLabel || 'Select File' }
+									{ field.buttonLabel || __( 'Select File', 'define-blocks' ) }
 								</Button>
 							) }
 						</div>

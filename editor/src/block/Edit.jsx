@@ -1,6 +1,7 @@
 import { useEffect, useRef } from '@wordpress/element';
 import { useBlockProps, InspectorControls, BlockControls } from '@wordpress/block-editor';
-import { PanelBody, ToolbarGroup, ToolbarButton, Icon } from '@wordpress/components';
+import { PanelBody, ToolbarGroup, ToolbarButton, Dropdown, Icon } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 import { doAction } from '@wordpress/hooks';
 import { BlockProvider } from '../store/Provider';
 import { useBlockContext } from '../store/hooks';
@@ -44,9 +45,8 @@ export default function Edit( { attributes, setAttributes, clientId, blockData, 
 	const inspectorPanels = schema.inspector || [];
 	const advancedFields = schema[ 'inspector-advanced' ]?.fields || {};
 	const toolbarGroups = schema.toolbar || [];
-	const toolbarDropdowns = schema[ 'toolbar-dropdown' ] || [];
 
-	const hasToolbar = toolbarGroups.length > 0 || toolbarDropdowns.length > 0;
+	const hasToolbar = toolbarGroups.length > 0;
 	const settings = blockData.settings || {};
 	const hasPreview = !! settings.frontendPreview;
 	const canCollapse = !! settings.canCollapse;
@@ -71,7 +71,7 @@ export default function Edit( { attributes, setAttributes, clientId, blockData, 
 						<ToolbarGroup>
 							<ToolbarButton
 								icon={ isPreview ? 'edit' : 'visibility' }
-								label={ isPreview ? 'Editor' : 'Preview' }
+								label={ isPreview ? __( 'Editor', 'define-blocks' ) : __( 'Preview', 'define-blocks' ) }
 								onClick={ togglePreview }
 								isPressed={ isPreview }
 							/>
@@ -81,25 +81,41 @@ export default function Edit( { attributes, setAttributes, clientId, blockData, 
 						<ToolbarGroup>
 							<ToolbarButton
 								icon={ isCollapsed ? 'arrow-down-alt2' : 'arrow-up-alt2' }
-								label={ isCollapsed ? 'Expand' : 'Collapse' }
+								label={ isCollapsed ? __( 'Expand', 'define-blocks' ) : __( 'Collapse', 'define-blocks' ) }
 								onClick={ toggleCollapse }
 							/>
 						</ToolbarGroup>
 					) }
-					{ hasToolbar && ! isPreview && toolbarGroups.map( ( group, gi ) => (
-						<ToolbarGroup key={ gi }>
-							{ Object.entries( group.fields || {} ).map( ( [ fieldName, fieldDef ] ) => (
-								<Dispatcher key={ fieldName } name={ fieldName } field={ fieldDef } scope="toolbar" />
-							) ) }
-						</ToolbarGroup>
-					) ) }
-					{ hasToolbar && ! isPreview && toolbarDropdowns.map( ( dropdown, di ) => (
-						<ToolbarGroup key={ `dd-${ di }` }>
-							{ Object.entries( dropdown.fields || {} ).map( ( [ fieldName, fieldDef ] ) => (
-								<Dispatcher key={ fieldName } name={ fieldName } field={ fieldDef } scope="toolbar" />
-							) ) }
-						</ToolbarGroup>
-					) ) }
+					{ hasToolbar && ! isPreview && toolbarGroups.map( ( group, gi ) =>
+						group.type === 'dropdown' ? (
+							<ToolbarGroup key={ gi }>
+								<Dropdown
+									popoverProps={ { className: 'defb-toolbar-dropdown' } }
+									renderToggle={ ( { isOpen, onToggle } ) => (
+										<ToolbarButton
+											icon={ group.icon || 'ellipsis' }
+											label={ group.label }
+											onClick={ onToggle }
+											aria-expanded={ isOpen }
+										/>
+									) }
+									renderContent={ () => (
+										<div className="defb-toolbar-dropdown__content">
+											{ Object.entries( group.fields || {} ).map( ( [ fieldName, fieldDef ] ) => (
+												<Dispatcher key={ fieldName } name={ fieldName } field={ fieldDef } scope="toolbar-dropdown" />
+											) ) }
+										</div>
+									) }
+								/>
+							</ToolbarGroup>
+						) : (
+							<ToolbarGroup key={ gi }>
+								{ Object.entries( group.fields || {} ).map( ( [ fieldName, fieldDef ] ) => (
+									<Dispatcher key={ fieldName } name={ fieldName } field={ fieldDef } scope="toolbar" />
+								) ) }
+							</ToolbarGroup>
+						)
+					) }
 				</BlockControls>
 
 				{ isPreview ? (

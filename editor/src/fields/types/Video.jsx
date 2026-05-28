@@ -1,4 +1,5 @@
 import { TextControl, BaseControl } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 function extractEmbedUrl( url ) {
 	if ( ! url ) {
@@ -63,7 +64,7 @@ export default function Video( { name, field, value, onChange } ) {
 						src={ embedUrl }
 						style={ { position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', border: 0 } }
 						allowFullScreen
-						title={ field.label || 'Video preview' }
+						title={ field.label || __( 'Video preview', 'define-blocks' ) }
 					/>
 				</div>
 			) }

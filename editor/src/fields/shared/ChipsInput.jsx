@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from '@wordpress/element';
 import { BaseControl, Icon } from '@wordpress/components';
+import { __, sprintf } from '@wordpress/i18n';
 import { DndContext, closestCenter, PointerSensor, KeyboardSensor, useSensor, useSensors } from '@dnd-kit/core';
 import { SortableContext, horizontalListSortingStrategy, arrayMove, useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
@@ -12,7 +13,7 @@ function Chip( { item, onRemove } ) {
 				type="button"
 				className="defb-chips-input__tag-remove"
 				onClick={ () => onRemove( item.value ) }
-				aria-label={ `Remove ${ item.label }` }
+				aria-label={ sprintf( __( 'Remove %s', 'define-blocks' ), item.label ) }
 			>
 				&times;
 			</button>
@@ -50,7 +51,7 @@ function SortableChip( { item, onRemove } ) {
 				type="button"
 				className="defb-chips-input__tag-remove"
 				onClick={ () => onRemove( item.value ) }
-				aria-label={ `Remove ${ item.label }` }
+				aria-label={ sprintf( __( 'Remove %s', 'define-blocks' ), item.label ) }
 			>
 				&times;
 			</button>
@@ -67,7 +68,7 @@ export default function ChipsInput( {
 	onSearch,
 	placeholder = '',
 	allowCreate = false,
-	createLabel = 'Create',
+	createLabel = __( 'Create', 'define-blocks' ),
 	draggable = false,
 } ) {
 	const items = Array.isArray( value ) ? value : [];

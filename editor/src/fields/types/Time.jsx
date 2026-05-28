@@ -1,4 +1,5 @@
 import { BaseControl, Button, DatePicker, TimePicker, Dropdown } from '@wordpress/components';
+import { __ } from '@wordpress/i18n';
 
 function formatDisplay( value, resolvedType ) {
 	if ( ! value ) {
@@ -27,12 +28,12 @@ function placeholderText( resolvedType, field ) {
 	}
 
 	const defaults = {
-		date: 'Select date',
-		time: 'Select time',
-		datetime: 'Select date and time',
+		date: __( 'Select date', 'define-blocks' ),
+		time: __( 'Select time', 'define-blocks' ),
+		datetime: __( 'Select date and time', 'define-blocks' ),
 	};
 
-	return defaults[ resolvedType ] || 'Select';
+	return defaults[ resolvedType ] || __( 'Select', 'define-blocks' );
 }
 
 export default function Time( { name, field, type, value, onChange } ) {
@@ -40,16 +41,16 @@ export default function Time( { name, field, type, value, onChange } ) {
 	const displayText = formatDisplay( value, resolvedType ) || placeholderText( resolvedType, field );
 
 	const handleDateChange = ( newDate ) => {
-		if ( resolvedType === 'date' && value ) {
+		if ( ( resolvedType === 'date' || resolvedType === 'datetime' ) && value ) {
 			const existing = new Date( value );
 			const incoming = new Date( newDate );
-			if ( ! isNaN( existing.getTime() ) ) {
+			if ( ! isNaN( existing.getTime() ) && ! isNaN( incoming.getTime() ) ) {
 				incoming.setHours( existing.getHours(), existing.getMinutes(), existing.getSeconds() );
+				onChange( incoming.toISOString() );
+				return;
 			}
-			onChange( incoming.toISOString() );
-		} else {
-			onChange( newDate );
 		}
+		onChange( newDate );
 	};
 
 	const handleTimeChange = ( newTime ) => {
