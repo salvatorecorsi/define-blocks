@@ -1,0 +1,57 @@
+@use 'tokens' as t;
+@use 'mixins' as m;
+
+.defb-repeater {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+
+	&__add {
+		margin-top: 8px;
+		align-self: flex-start;
+	}
+}
+
+.defb-repeater-item {
+	border: 1px solid t.$border;
+	border-radius: t.$radius;
+	background: t.$surface;
+	transition: border-color t.$transition, box-shadow t.$transition;
+
+	&:hover {
+		border-color: t.$border-input;
+	}
+
+	&__header {
+		display: flex;
+		align-items: center;
+		gap: 4px;
+		min-height: 40px;
+		padding: 0 8px;
+		border-bottom: 1px solid t.$border;
+		font-size: 12px;
+		user-select: none;
+		cursor: pointer;
+	}
+
+	&__drag {
+		@include m.drag-handle;
+		padding: 4px;
+		opacity: 0.4;
+	}
+
+	&__header .components-button {
+		opacity: 0.4;
+	}
+
+	&__label {
+		flex: 1;
+		font-weight: 500;
+		color: t.$text;
+		@include m.truncate;
+	}
+
+	&__body {
+		padding: 12px;
+	}
+}

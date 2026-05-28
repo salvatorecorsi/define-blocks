@@ -1,0 +1,54 @@
+@use 'tokens' as t;
+@use 'mixins' as m;
+
+.defb-post-selector {
+	position: relative;
+
+	&__dropdown {
+		@include m.dropdown;
+	}
+
+	&__dropdown-item {
+		@include m.dropdown-item;
+	}
+
+	&__list {
+		margin-top: 8px;
+	}
+
+	&__item {
+		display: flex;
+		align-items: center;
+		gap: 8px;
+		padding: 6px 8px;
+		background: t.$surface-alt;
+		border: 1px solid t.$border;
+		border-radius: t.$radius;
+		margin-bottom: 4px;
+		transition: border-color t.$transition;
+
+		&:hover {
+			border-color: t.$border-input;
+		}
+	}
+
+	&__drag-handle {
+		@include m.drag-handle;
+		padding: 4px;
+		flex-shrink: 0;
+	}
+
+	&__thumbnail {
+		width: 32px;
+		height: 32px;
+		object-fit: cover;
+		border-radius: t.$radius;
+		flex-shrink: 0;
+	}
+
+	&__title {
+		flex: 1;
+		font-size: 13px;
+		@include m.truncate;
+	}
+}

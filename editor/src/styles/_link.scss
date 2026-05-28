@@ -1,0 +1,24 @@
+@use 'tokens' as t;
+@use 'mixins' as m;
+
+.defb-link-field {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+
+	.components-toggle-control {
+		margin-top: -4px;
+	}
+
+	&__search {
+		position: relative;
+	}
+
+	&__results {
+		@include m.dropdown;
+
+		li button {
+			@include m.dropdown-item;
+		}
+	}
+}

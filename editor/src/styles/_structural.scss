@@ -1,0 +1,84 @@
+@use 'tokens' as t;
+
+.defb-block .components-tab-panel__tabs {
+	border-bottom: 1px solid t.$border;
+	margin-bottom: 12px;
+
+	button {
+		font-size: 12px;
+		font-weight: 500;
+		text-transform: uppercase;
+		letter-spacing: 0.03em;
+	}
+}
+
+.defb-field[data-field-type="group"] > .components-base-control {
+	border: 1px solid t.$border;
+	border-radius: t.$radius;
+	padding: 12px;
+
+	> .components-base-control__label {
+		margin: -12px -12px 12px;
+		padding: 6px 12px;
+		display: block;
+		border-bottom: 1px solid t.$border;
+	}
+}
+
+.defb-field[data-field-type="innerblocks"] {
+	border-radius: t.$radius;
+	min-height: 48px;
+	box-sizing: border-box;
+	max-width: 100%;
+	overflow: hidden;
+}
+
+.defb-field[data-field-type="value"] .components-text-control__input {
+	background: t.$surface-alt;
+	color: t.$text-muted;
+	cursor: not-allowed;
+	opacity: 0.75;
+}
+
+.defb-field-html {
+	border-radius: t.$radius;
+	font-size: 13px;
+	line-height: 1.5;
+}
+
+.defb-url-search {
+	position: relative;
+	margin-top: 4px;
+}
+
+.defb-field[data-field-type="time"],
+.defb-field[data-field-type="date"],
+.defb-field[data-field-type="datetime"] {
+	.components-dropdown {
+		display: block;
+	}
+}
+
+.defb-datetime-popover .components-popover__content {
+	padding: 16px;
+}
+
+.defb-datetime-content .components-datetime__time {
+	display: flex;
+	gap: 16px;
+
+	fieldset {
+		flex: 1;
+		min-width: 0;
+	}
+}
+
+.defb-datetime-content--datetime {
+	display: flex;
+	gap: 16px;
+	align-items: flex-start;
+
+	.components-datetime__time fieldset:last-of-type {
+		display: none;
+	}
+}

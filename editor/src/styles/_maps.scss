@@ -1,0 +1,102 @@
+@use 'tokens' as t;
+
+.defb-map {
+	position: relative;
+	width: 100%;
+	overflow: hidden;
+	border: 1px solid t.$border-input;
+	border-radius: t.$radius;
+	contain: paint;
+	isolation: isolate;
+
+	&--loading {
+		opacity: 0.6;
+		pointer-events: none;
+	}
+
+	&__canvas {
+		width: 100%;
+		height: 300px;
+	}
+
+	&__loading {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		min-height: 200px;
+		background: t.$surface-alt;
+		border-radius: t.$radius;
+	}
+
+	&__pin {
+		display: block;
+		position: relative;
+		width: 24px;
+		height: 24px;
+		background: t.$accent;
+		border: 2px solid #fff;
+		border-radius: 50% 50% 50% 0;
+		box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+		transform: rotate(-45deg);
+
+		&::after {
+			content: '';
+			position: absolute;
+			width: 8px;
+			height: 8px;
+			top: 6px;
+			left: 6px;
+			background: #fff;
+			border-radius: 50%;
+		}
+	}
+}
+
+.defb-map .leaflet-container {
+	width: 100%;
+	height: 100% !important;
+	min-height: 300px;
+	max-width: 100%;
+	overflow: hidden !important;
+	z-index: 0;
+}
+
+.defb-map .leaflet-map-pane,
+.defb-map .leaflet-tile-pane,
+.defb-map .leaflet-overlay-pane,
+.defb-map .leaflet-marker-pane,
+.defb-map .leaflet-shadow-pane,
+.defb-map .leaflet-tooltip-pane,
+.defb-map .leaflet-popup-pane,
+.defb-map .leaflet-tile-container,
+.defb-map .leaflet-zoom-animated {
+	max-width: none !important;
+	max-height: none !important;
+}
+
+.defb-map-inspector {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+}
+
+.defb-map-search {
+	display: flex;
+	gap: 8px;
+	align-items: flex-start;
+
+	.components-base-control {
+		flex: 1;
+		margin: 0;
+	}
+}
+
+.defb-map-coords {
+	display: flex;
+	gap: 8px;
+
+	.components-base-control {
+		flex: 1;
+		min-width: 0;
+	}
+}
